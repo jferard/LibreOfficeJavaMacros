@@ -17,11 +17,13 @@
  */
 package com.github.jferard.libreofficemacrosexample;
 
+import com.github.jferard.libreofficemacrostools.Helper;
 import com.sun.star.script.provider.XScriptContext;
 import com.sun.star.uno.Exception;
 
 public class Example {
     public void example(XScriptContext xScriptContext) throws Exception {
+        new Helper(xScriptContext);
         ExampleHelper exampleHelper = ExampleHelper.create(xScriptContext);
         new GUI(xScriptContext, exampleHelper).execute();
     }
