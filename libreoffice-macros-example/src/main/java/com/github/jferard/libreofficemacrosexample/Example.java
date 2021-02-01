@@ -23,8 +23,7 @@ import com.sun.star.uno.Exception;
 
 public class Example {
     public void example(XScriptContext xScriptContext) throws Exception {
-        new Helper(xScriptContext);
-        ExampleHelper exampleHelper = ExampleHelper.create(xScriptContext);
+        Helper exampleHelper = Helper.create(xScriptContext);
         new GUI(xScriptContext, exampleHelper).execute();
     }
 }

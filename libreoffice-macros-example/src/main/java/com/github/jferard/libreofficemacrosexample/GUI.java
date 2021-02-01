@@ -18,6 +18,7 @@
 
 package com.github.jferard.libreofficemacrosexample;
 
+import com.github.jferard.libreofficemacrostools.Helper;
 import com.sun.star.beans.XPropertySet;
 import com.sun.star.container.ElementExistException;
 import com.sun.star.container.NoSuchElementException;
@@ -39,17 +40,14 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 public class GUI {
     private XScriptContext xScriptContext;
-    private ExampleHelper exampleHelper;
+    private Helper exampleHelper;
 
     public GUI(XScriptContext xScriptContext,
-               ExampleHelper exampleHelper) {
+               Helper exampleHelper) {
         this.xScriptContext = xScriptContext;
         this.exampleHelper = exampleHelper;
     }
@@ -57,7 +55,7 @@ public class GUI {
     public void execute() throws Exception {
         try {
             File file = getFile();
-            createBase(file);
+            Data.createBase(file);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (URISyntaxException e) {
@@ -104,30 +102,12 @@ public class GUI {
         xNameContainer.insertByName("first query", oQueryDefinition);
     }
 
-    private Object createQuery(ExampleHelper exampleHelper) throws Exception {
+    private Object createQuery(Helper exampleHelper) throws Exception {
         Object oQueryDefinition = exampleHelper.createService("com.sun.star.sdb.QueryDefinition");
         XPropertySet
                 xQueryDefinition = UnoRuntime.queryInterface(XPropertySet.class, oQueryDefinition);
-        xQueryDefinition.setPropertyValue("Command", "SELECT * FROM \"TEMP\" WHERE \"FIELD1\">1");
+        xQueryDefinition.setPropertyValue("Command", "SELECT * FROM \"MYTABLE\" WHERE \"FIELD1\">1");
         return oQueryDefinition;
-    }
-
-    private void createBase(File file) throws SQLException {
-        System.setProperty("textdb.allow_full_path", "true");
-        Connection connection = DriverManager
-                .getConnection("jdbc:hsqldb:file:./base.h2", null, null);
-        try {
-            Statement statement = connection.createStatement();
-            statement.execute(
-                    "DROP TABLE temp IF EXISTS");
-            statement.execute(
-                    "CREATE TEXT TABLE temp (field1 INTEGER, field2 VARCHAR(100), field3 VARCHAR(100))");
-            statement.execute(
-                    "SET TABLE temp SOURCE \"" + file.getAbsolutePath().replace("\\", "/") +
-                            ";ignore_first=true;fs=\\semi\"");
-        } finally {
-            connection.close();
-        }
     }
 
     private XDataSource connectToBase(XModel xDocModel)

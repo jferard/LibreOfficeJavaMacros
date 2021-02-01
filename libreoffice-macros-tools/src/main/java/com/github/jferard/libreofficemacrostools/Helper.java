@@ -23,34 +23,44 @@ import com.sun.star.script.provider.XScript;
 import com.sun.star.script.provider.XScriptContext;
 import com.sun.star.script.provider.XScriptProvider;
 import com.sun.star.script.provider.XScriptProviderFactory;
+import com.sun.star.uno.Exception;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 
 public class Helper {
-    private XScript xrayScript;
-    private XScriptContext xScriptContext;
+    public static Helper create(XScriptContext xScriptContext) {
+        XComponentContext xContext = xScriptContext.getComponentContext();
+        XMultiComponentFactory xFactory = xContext.getServiceManager();
+        return new Helper(xContext, xFactory);
 
-    public Helper(XScriptContext xScriptContext) {
-        // this.xScriptContext = xScriptContext;
     }
 
-    public void xray(Object target)
+    private final XComponentContext xContext;
+    private final XMultiComponentFactory xFactory;
+    private XScript xrayScript;
+
+    public Helper(XComponentContext xContext, XMultiComponentFactory xFactory) {
+        this.xContext = xContext;
+        this.xFactory = xFactory;
+    }
+
+    public Object createService(final String serviceName) throws Exception {
+        return xFactory.createInstanceWithContext(serviceName, xContext);
+    }
+
+    public void xray(XScriptContext xScriptContext, Object target)
             throws Exception {
         if (xrayScript == null) {
-            initXray(target);
+            initXray(xScriptContext);
         }
-        xrayScript.invoke(new Object[]{target}, new short[][]{}, new Object[][]{});
+        xrayScript.invoke(new Object[]{target}, new short[100][100], new Object[100][100]);
     }
 
-    private void initXray(Object target) throws Exception {
-        System.out.println("***********>>>>>>" + xScriptContext);
+    private void initXray(XScriptContext xScriptContext) throws Exception {
         XComponentContext xContext = xScriptContext.getComponentContext();
-        System.out.println("***********>>>>>>" + xContext);
         XMultiComponentFactory factory = xContext.getServiceManager();
-        System.out.println("***********>>>>>>" + factory);
         Object oFactory = factory.createInstanceWithContext(
                 "com.sun.star.script.provider.MasterScriptProviderFactory", xContext);
-        System.out.println("***********>>>>>>" + oFactory);
         XScriptProviderFactory xFactory =
                 UnoRuntime.queryInterface(XScriptProviderFactory.class, oFactory);
         XScriptProvider xProvider = xFactory.createScriptProvider("");
