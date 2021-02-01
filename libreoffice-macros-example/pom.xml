@@ -57,6 +57,24 @@
                         <goals>
                             <goal>shade</goal>
                         </goals>
+                        <configuration>
+                            <artifactSet>
+                                <excludes>
+                                    <exclude>org.hsqldb:hsqldb</exclude>
+                                    <exclude>org.libreoffice:*</exclude>
+                                    <exclude>resources/*.*</exclude>
+                                </excludes>
+                            </artifactSet>
+                            <filters>
+                                <filter>
+                                    <artifact>com.github.jferard:*</artifact>
+                                    <excludes>
+                                        <exclude>*.odb</exclude>
+                                        <exclude>embed/**/*.*</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
