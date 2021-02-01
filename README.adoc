@@ -1,0 +1,21 @@
+= LibreOffice Macros
+
+Write and embed LibreOffice Java macros with Maven.
+
+Copyright (C) 2021 J. Férard
+
+License: GPL v3
+
+**WIP**
+
+== Goal
+The main goal is to inject libreoffice macros written in java in an ODF file using a Maven plugin.
+
+The example aims to insert CSV data inside a HSQLDB database and then build some queries.
+
+== Base command
+This is the command I use to create the example file.
+
+```
+mvn clean install && cp libreoffice-macros-tools/target/libreoffice-macros-tools-0.0.1-SNAPSHOT.jar libreoffice-macros-example/src/main/resources/embed/ && libreoffice libreoffice-macros-example/target/classes/empty-target.odb
+```
