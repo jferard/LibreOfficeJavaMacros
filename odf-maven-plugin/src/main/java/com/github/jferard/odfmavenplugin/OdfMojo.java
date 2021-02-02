@@ -27,14 +27,11 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
-import sun.awt.X11.XEmbeddedFrame;
 
-import java.io.FileDescriptor;
-import java.rmi.server.ExportException;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.io.File;
 
 @Mojo(name = "odf", defaultPhase = LifecyclePhase.INSTALL, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
 public class OdfMojo extends AbstractMojo {
