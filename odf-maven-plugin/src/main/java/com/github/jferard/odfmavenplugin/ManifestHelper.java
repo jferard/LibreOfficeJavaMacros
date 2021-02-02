@@ -31,9 +31,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -41,10 +39,10 @@ public class ManifestHelper {
     private final Namespace manifestNS;
     private String moduleName;
     private final XMLOutputter xmlOutput;
-    private List<RelativeFile> filesToEmbed;
+    private List<RelativePath> filesToEmbed;
 
     public ManifestHelper(String moduleName,
-                          List<RelativeFile> filesToEmbed) {
+                          List<RelativePath> filesToEmbed) {
         this.filesToEmbed = filesToEmbed;
         manifestNS = Namespace
                 .getNamespace("manifest", "urn:oasis:names:tc:opendocument:xmlns:manifest:1.0");
@@ -67,8 +65,8 @@ public class ManifestHelper {
         for (String directory : directories) {
             elements.add(createDirectoryElement(directory));
         }
-        for (RelativeFile rf : this.filesToEmbed) {
-            elements.add(createFileElement("Scripts/java/"+this.moduleName+"/"+rf.getName()));
+        for (RelativePath rf : this.filesToEmbed) {
+            elements.add(createFileElement("Scripts/java/"+this.moduleName+"/"+rf.getUniversalRelativePath()));
         }
         return elements;
     }
@@ -79,14 +77,14 @@ public class ManifestHelper {
         directories.add("Scripts/java");
         directories.add("Scripts/java/"+moduleName);
         String base = "Scripts/java/" + this.moduleName + "/";
-        for (RelativeFile rf : this.filesToEmbed) {
-            String[] strings = rf.getName().split("/");
-            if (strings.length > 1) {
-                StringBuilder sb = new StringBuilder(strings[0]);
+        for (RelativePath rf : this.filesToEmbed) {
+            List<String> parts = rf.getRelativePathParts();
+            if (parts.size() > 1) {
+                StringBuilder sb = new StringBuilder(parts.get(0));
                 directories.add(base + sb.toString());
-                for (int i = 1; i < strings.length - 1; i++) {
+                for (int i = 1; i < parts.size() - 1; i++) {
                     directories.add(base + sb.toString());
-                    sb.append("/").append(strings[i]);
+                    sb.append("/").append(parts.get(i));
                     directories.add(base + sb.toString());
                 }
             }

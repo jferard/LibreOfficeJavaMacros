@@ -19,14 +19,11 @@
 package com.github.jferard.odfmavenplugin;
 
 import org.jdom2.JDOMException;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -34,12 +31,12 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 public class OdfUpdater {
-    private String moduleName;
-    private File sourceOdf;
-    private final File destOdf;
-    private List<RelativeFile> filesToEmbed;
+    private final String moduleName;
+    private final Path sourceOdf;
+    private final Path destOdf;
+    private final List<RelativePath> filesToEmbed;
 
-    public OdfUpdater(String moduleName, File sourceOdf, File destOdf, List<RelativeFile> filesToEmbed) {
+    public OdfUpdater(String moduleName, Path sourceOdf, Path destOdf, List<RelativePath> filesToEmbed) {
         this.moduleName = moduleName;
         this.sourceOdf = sourceOdf;
         this.destOdf = destOdf;
@@ -47,12 +44,11 @@ public class OdfUpdater {
     }
 
     public void updateZip()
-            throws IOException, ParserConfigurationException, SAXException, JDOMException {
-        ZipFile zipFile = new ZipFile(sourceOdf);
-        ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(destOdf));
-        try {
-            for (Enumeration e = zipFile.entries(); e.hasMoreElements(); ) {
-                ZipEntry entryIn = (ZipEntry) e.nextElement();
+            throws IOException, JDOMException {
+        ZipFile zipFile = new ZipFile(sourceOdf.toFile());
+        try (ZipOutputStream zos = new ZipOutputStream(Files.newOutputStream(destOdf))) {
+            for (Enumeration<? extends ZipEntry> e = zipFile.entries(); e.hasMoreElements(); ) {
+                ZipEntry entryIn = e.nextElement();
                 if (!entryIn.getName().equalsIgnoreCase("META-INF/manifest.xml")) {
                     copyEntry(zipFile, entryIn, zos);
                 } else {
@@ -60,14 +56,12 @@ public class OdfUpdater {
                 }
                 zos.closeEntry();
             }
-            String destPath = "Scripts/java/" + moduleName+ "/";
-            for (RelativeFile fileToEmbed : filesToEmbed) {
-                zos.putNextEntry(new ZipEntry(destPath+fileToEmbed.getName()));
-                copyStream(new FileInputStream(fileToEmbed.getFile()), zos);
+            String destPath = "Scripts/java/" + moduleName + "/";
+            for (RelativePath fileToEmbed : filesToEmbed) {
+                zos.putNextEntry(new ZipEntry(destPath + fileToEmbed.getUniversalRelativePath()));
+                copyStream(Files.newInputStream(fileToEmbed.getPath()), zos);
                 zos.closeEntry();
             }
-        } finally {
-            zos.close();
         }
     }
 
@@ -87,7 +81,7 @@ public class OdfUpdater {
     }
 
     private void updateManifest(ZipFile zipFile, ZipEntry entryIn, ZipOutputStream zos)
-            throws IOException, ParserConfigurationException, SAXException, JDOMException {
+            throws IOException, JDOMException {
         zos.putNextEntry(new ZipEntry(entryIn.getName()));
         InputStream is = zipFile.getInputStream(entryIn);
         new ManifestHelper(moduleName, filesToEmbed).update(is, zos);

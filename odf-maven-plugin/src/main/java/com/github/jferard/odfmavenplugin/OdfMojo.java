@@ -28,12 +28,17 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-@Mojo(name = "odf", defaultPhase = LifecyclePhase.INSTALL, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
+@Mojo(name = "odf", defaultPhase = LifecyclePhase.INSTALL,
+        requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
 public class OdfMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project}", required = true, readonly = true)
     MavenProject project;
@@ -42,60 +47,61 @@ public class OdfMojo extends AbstractMojo {
     private String moduleName;
 
     @Parameter(property = "odf.src", required = true, alias = "src")
-    private String sourcePath;
+    private String sourcePathStr;
 
     @Parameter(property = "odf.dest", alias = "dest")
     private String destPath;
 
-    @Parameter(property = "odf.embed", defaultValue = "${basedir}/src/main/resources/embed", alias = "embed")
-    private String embedPath;
+    @Parameter(property = "odf.embed", defaultValue = "${basedir}/src/main/resources/embed",
+            alias = "embed")
+    private String embedPathStr;
 
-    public void execute() throws MojoExecutionException, MojoFailureException {
-        List<RelativeFile> filesToEmbed = getFilesToEmbed();
-
-        File destFile = getDestFile();
-        getLog().info("Embed "+filesToEmbed+" in "+sourcePath+" -> "+destPath);
+    public void execute() throws MojoExecutionException {
         try {
-            new OdfUpdater(moduleName, new File(sourcePath), destFile, filesToEmbed).updateZip();
+            List<RelativePath> filesToEmbed = this.getFilesToEmbed();
+            Path destPath = getDestPath();
+            getLog().info(
+                    "Embed " + filesToEmbed + " in " + sourcePathStr + " -> " + this.destPath);
+            new OdfUpdater(moduleName, Paths.get(sourcePathStr), destPath, filesToEmbed)
+                    .updateZip();
         } catch (Exception e) {
             throw new MojoExecutionException("odf-maven-plugin failed", e);
         }
 
     }
 
-    private List<RelativeFile> getFilesToEmbed() {
-        List<RelativeFile> filesToEmbed = new ArrayList<RelativeFile>();
+    private List<RelativePath> getFilesToEmbed() throws IOException {
+        List<RelativePath> filesToEmbed = new ArrayList<>();
         Artifact artifact = project.getArtifact();
-        File jarFile = artifact.getFile();
-        filesToEmbed.add(new RelativeFile(jarFile.getParentFile(), jarFile.getName()));
+        Path jarPath = artifact.getFile().toPath();
+        filesToEmbed.add(new RelativePath(jarPath.getParent(), jarPath.getFileName()));
 
-        List<File> files = new LinkedList<>();
-        File embedDir = new File(embedPath);
-        files.add(embedDir);
-        while (!files.isEmpty()) {
-            File nextFile = files.remove(0);
-            for (File f : nextFile.listFiles()) {
-                if (f.isDirectory()) {
-                    files.add(f);
+        List<Path> paths = new LinkedList<>();
+        Path embedPath = Paths.get(embedPathStr);
+        paths.add(embedPath);
+        while (!paths.isEmpty()) {
+            Path curPath = paths.remove(0);
+            Iterator<Path> it = Files.list(curPath).iterator();
+            while (it.hasNext()) {
+                Path childPath = it.next();
+                if (Files.isDirectory(childPath)) {
+                    paths.add(childPath);
                 } else {
-                    String basePath = embedDir.getAbsolutePath();
-                    String curPath = f.getAbsolutePath();
-                    assert curPath.startsWith(basePath);
-                    String name = curPath.substring(basePath.length()+1);
-                    filesToEmbed.add(new RelativeFile(embedDir, name));
+                    Path relativePath = embedPath.relativize(childPath);
+                    filesToEmbed.add(new RelativePath(embedPath, relativePath));
                 }
             }
         }
         return filesToEmbed;
     }
 
-    private File getDestFile() {
-        File destFile;
+    private Path getDestPath() {
+        Path destFile;
         if (destPath == null) {
-            String destName = Util.insertSuffix(new File(sourcePath).getName(), "-target");
-            destFile = new File(project.getBuild().getOutputDirectory(), destName);
+            String destName = Util.insertSuffix(Paths.get(sourcePathStr).getFileName().toString(), "-target");
+            destFile = Paths.get(project.getBuild().getOutputDirectory(), destName);
         } else {
-            destFile = new File(destPath);
+            destFile = Paths.get(destPath);
         }
         return destFile;
     }
