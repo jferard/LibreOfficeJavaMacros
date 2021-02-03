@@ -60,7 +60,7 @@
                         <configuration>
                             <artifactSet>
                                 <excludes>
-                                    <exclude>org.hsqldb:hsqldb</exclude>
+                                    <!-- <exclude>org.hsqldb:hsqldb</exclude> -->
                                     <exclude>org.libreoffice:*</exclude>
                                     <exclude>resources/*.*</exclude>
                                 </excludes>
