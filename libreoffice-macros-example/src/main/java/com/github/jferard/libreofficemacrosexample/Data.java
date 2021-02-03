@@ -19,16 +19,24 @@
 package com.github.jferard.libreofficemacrosexample;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
 public class Data {
-    public static void createBase(File file) throws SQLException {
-        System.setProperty("textdb.allow_full_path", "true");
+    public static void createBase(File documentDirectoryFile, File dbFile, File csvFile)
+            throws SQLException, IOException, ClassNotFoundException {
+        File tempDir = new File(documentDirectoryFile, "temp");
+        if (!tempDir.mkdirs()) {
+            throw new IOException("Can't create directory");
+        }
+        String name = csvFile.getName();
+        Util.copyFile(csvFile, new File(tempDir, name));
+        Class.forName("org.hsqldb.jdbcDriver");
         Connection connection = DriverManager
-                .getConnection("jdbc:hsqldb:file:./base.h2", null, null);
+                .getConnection("jdbc:hsqldb:file:"+dbFile, null, null);
         try {
             Statement statement = connection.createStatement();
             statement.execute(
@@ -36,8 +44,7 @@ public class Data {
             statement.execute(
                     "CREATE TEXT TABLE temp (field1 INTEGER, field2 VARCHAR(100), field3 VARCHAR(100))");
             statement.execute(
-                    "SET TABLE temp SOURCE \"" + file.getAbsolutePath().replace("\\", "/") +
-                            ";ignore_first=true;fs=\\semi\"");
+                    "SET TABLE temp SOURCE \"temp/" + name + ";ignore_first=true;fs=\\semi\"");
             statement.execute(
                     "DROP TABLE mytable IF EXISTS");
             statement.execute(

@@ -22,7 +22,7 @@ import com.sun.star.script.provider.XScriptContext;
 import com.sun.star.uno.Exception;
 
 public class Example {
-    public void example(XScriptContext xScriptContext) throws Exception {
+    public void example(XScriptContext xScriptContext) throws java.lang.Exception {
         Helper exampleHelper = Helper.create(xScriptContext);
         new GUI(xScriptContext, exampleHelper).execute();
     }

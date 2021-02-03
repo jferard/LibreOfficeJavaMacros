@@ -52,20 +52,13 @@ public class GUI {
         this.exampleHelper = exampleHelper;
     }
 
-    public void execute() throws Exception {
-        try {
-            File file = getFile();
-            Data.createBase(file);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
+    public void execute() throws java.lang.Exception {
+        File file = getFile();
+        File documentDirectoryFile = exampleHelper.getDocumentDirectoryFile();
+        File dbFile = new File(documentDirectoryFile, "base.h2");
+        Data.createBase(documentDirectoryFile, dbFile, file);
         XModel xDocModel = xScriptContext.getDocument();
-        XDataSource oDataSource = connectToBase(xDocModel);
+        XDataSource oDataSource = connectToBase(dbFile, xDocModel);
         Object oQueryDefinition = createQuery(exampleHelper);
         addQuery(oDataSource, oQueryDefinition);
     }
@@ -110,14 +103,14 @@ public class GUI {
         return oQueryDefinition;
     }
 
-    private XDataSource connectToBase(XModel xDocModel)
+    private XDataSource connectToBase(File dbFile, XModel xDocModel)
             throws Exception {
         XOfficeDatabaseDocument
-                xModel2 = UnoRuntime.queryInterface(XOfficeDatabaseDocument.class, xDocModel);
-        XDataSource oDataSource = xModel2.getDataSource();
+                xODB = UnoRuntime.queryInterface(XOfficeDatabaseDocument.class, xDocModel);
+        XDataSource oDataSource = xODB.getDataSource();
         XPropertySet
                 xDataSource = UnoRuntime.queryInterface(XPropertySet.class, oDataSource);
-        xDataSource.setPropertyValue("URL", "jdbc:hsqldb:file:./base.h2");
+        xDataSource.setPropertyValue("URL", "jdbc:hsqldb:file:"+dbFile);
         xDataSource.setPropertyValue("User", "");
         Object oSettings = xDataSource.getPropertyValue("Settings");
         XPropertySet
