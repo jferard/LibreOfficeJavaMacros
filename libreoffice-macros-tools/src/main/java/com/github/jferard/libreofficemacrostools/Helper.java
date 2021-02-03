@@ -18,6 +18,7 @@
 
 package com.github.jferard.libreofficemacrostools;
 
+import com.sun.star.frame.XModel;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.script.provider.XScript;
 import com.sun.star.script.provider.XScriptContext;
@@ -27,25 +28,46 @@ import com.sun.star.uno.Exception;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.io.File;
+
 public class Helper {
     public static Helper create(XScriptContext xScriptContext) {
         XComponentContext xContext = xScriptContext.getComponentContext();
         XMultiComponentFactory xFactory = xContext.getServiceManager();
-        return new Helper(xContext, xFactory);
+        XModel xDocModel = xScriptContext.getDocument();
+        return new Helper(xContext, xDocModel, xFactory);
 
     }
 
     private final XComponentContext xContext;
+    private final XModel xDocModel;
     private final XMultiComponentFactory xFactory;
     private XScript xrayScript;
 
-    public Helper(XComponentContext xContext, XMultiComponentFactory xFactory) {
+    public Helper(XComponentContext xContext, XModel xDocModel,
+                  XMultiComponentFactory xFactory) {
         this.xContext = xContext;
+        this.xDocModel = xDocModel;
         this.xFactory = xFactory;
+    }
+
+    public XComponentContext getXContext() {
+        return this.xContext;
     }
 
     public Object createService(final String serviceName) throws Exception {
         return xFactory.createInstanceWithContext(serviceName, xContext);
+    }
+
+    public URL getDocumentURL() throws MalformedURLException {
+        return new URL(xDocModel.getURL());
+    }
+
+    public File getDocumentDirectoryFile() throws MalformedURLException, URISyntaxException {
+        return new File(new URL(xDocModel.getURL()).toURI()).getParentFile();
     }
 
     public void xray(XScriptContext xScriptContext, Object target)
