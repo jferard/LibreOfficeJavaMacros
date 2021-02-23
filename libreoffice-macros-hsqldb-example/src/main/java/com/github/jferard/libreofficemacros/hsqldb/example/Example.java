@@ -1,5 +1,5 @@
 /*
- * LibreOffice Java Macros. Write and embed LibreOffice Java macros with Maven.
+ * LibreOffice Macros. Write and embed LibreOffice Java macros with Maven.
  *     Copyright (C) 2021 Julien Férard
  *
  *     This program is free software: you can redistribute it and/or modify
@@ -15,11 +15,10 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.github.jferard.libreofficemacrosexample;
+package com.github.jferard.libreofficemacros.hsqldb.example;
 
 import com.github.jferard.libreofficemacrostools.Helper;
 import com.sun.star.script.provider.XScriptContext;
-import com.sun.star.uno.Exception;
 
 public class Example {
     public void example(XScriptContext xScriptContext) throws java.lang.Exception {

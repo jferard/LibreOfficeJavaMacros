@@ -24,10 +24,10 @@
                 Text highlighting
             </description>
         </locale>
-        <functionname value="com.github.jferard.libreofficemacrosexample.Example.example"/>
+        <functionname value="com.github.jferard.libreofficemacros.hsqldb.example.Example.example"/>
         <logicalname value="LibreOfficeMacrosExample.Example"/>
         <languagedepprops>
-            <prop name="classpath" value="libreoffice-macros-example-0.0.1-SNAPSHOT.jar"/>
+            <prop name="classpath" value="libreoffice-macros-hsqldb-example-0.0.1-SNAPSHOT.jar"/>
         </languagedepprops>
     </script>
 </parcel>

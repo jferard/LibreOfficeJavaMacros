@@ -30,6 +30,6 @@
     <modules>
         <module>odf-maven-plugin</module>
         <module>libreoffice-macros-tools</module>
-        <module>libreoffice-macros-example</module>
+        <module>libreoffice-macros-hsqldb-example</module>
     </modules>
 </project>

@@ -16,7 +16,7 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.github.jferard.libreofficemacrosexample;
+package com.github.jferard.libreofficemacros.hsqldb.example;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

@@ -23,7 +23,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.github.jferard</groupId>
-    <artifactId>libreoffice-macros-example</artifactId>
+    <artifactId>libreoffice-macros-hsqldb-example</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
     <properties>
