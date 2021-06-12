@@ -27,7 +27,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+/**
+ * A utility class.
+ */
 public class Util {
+    /**
+     * Copy a file
+     * @param source source file
+     * @param dest dest file
+     * @throws IOException if the copy failed
+     */
     public static void copyFile(File source, File dest) throws IOException {
         InputStream in = new BufferedInputStream(new FileInputStream(source));
         try {

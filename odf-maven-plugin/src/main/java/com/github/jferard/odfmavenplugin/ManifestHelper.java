@@ -35,12 +35,19 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+/**
+ * A helper class to writ the manifest
+ */
 public class ManifestHelper {
     private final Namespace manifestNS;
     private String moduleName;
     private final XMLOutputter xmlOutput;
     private List<RelativePath> filesToEmbed;
 
+    /**
+     * @param moduleName  the name of the module
+     * @param filesToEmbed thelist of the files to embed
+     */
     public ManifestHelper(String moduleName,
                           List<RelativePath> filesToEmbed) {
         this.filesToEmbed = filesToEmbed;
@@ -51,6 +58,12 @@ public class ManifestHelper {
         xmlOutput.setFormat(Format.getPrettyFormat());
     }
 
+    /**
+     * @param is the META-INF/manifest.xml input stream
+     * @param out the META-INF/manifest.xml output stream
+     * @throws JDOMException if there is a XML exception
+     * @throws IOException if there is a IO exception.
+     */
     public void update(InputStream is, OutputStream out) throws JDOMException, IOException {
         SAXBuilder saxBuilder = new SAXBuilder();
         Document document = saxBuilder.build(is);

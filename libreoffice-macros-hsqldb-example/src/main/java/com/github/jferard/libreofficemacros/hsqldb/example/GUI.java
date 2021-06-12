@@ -40,7 +40,6 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.sql.SQLException;
 
 public class GUI {
     private XScriptContext xScriptContext;
@@ -52,6 +51,10 @@ public class GUI {
         this.exampleHelper = exampleHelper;
     }
 
+    /**
+     * Create a base and add a query.
+     * @throws java.lang.Exception
+     */
     public void execute() throws java.lang.Exception {
         File file = getFile();
         File documentDirectoryFile = exampleHelper.getDocumentDirectoryFile();
@@ -95,14 +98,6 @@ public class GUI {
         xNameContainer.insertByName("first query", oQueryDefinition);
     }
 
-    private Object createQuery(Helper exampleHelper) throws Exception {
-        Object oQueryDefinition = exampleHelper.createService("com.sun.star.sdb.QueryDefinition");
-        XPropertySet
-                xQueryDefinition = UnoRuntime.queryInterface(XPropertySet.class, oQueryDefinition);
-        xQueryDefinition.setPropertyValue("Command", "SELECT * FROM \"MYTABLE\" WHERE \"FIELD1\">1");
-        return oQueryDefinition;
-    }
-
     private XDataSource connectToBase(File dbFile, XModel xDocModel)
             throws Exception {
         XOfficeDatabaseDocument
@@ -117,5 +112,13 @@ public class GUI {
                 xSettings = UnoRuntime.queryInterface(XPropertySet.class, oSettings);
         xSettings.setPropertyValue("JavaDriverClass", "org.hsqldb.jdbcDriver");
         return oDataSource;
+    }
+
+    private Object createQuery(Helper exampleHelper) throws Exception {
+        Object oQueryDefinition = exampleHelper.createService("com.sun.star.sdb.QueryDefinition");
+        XPropertySet
+                xQueryDefinition = UnoRuntime.queryInterface(XPropertySet.class, oQueryDefinition);
+        xQueryDefinition.setPropertyValue("Command", "SELECT * FROM \"MYTABLE\" WHERE \"FIELD1\">1");
+        return oQueryDefinition;
     }
 }

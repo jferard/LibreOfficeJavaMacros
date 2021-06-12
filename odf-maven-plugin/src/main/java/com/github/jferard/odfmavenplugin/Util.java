@@ -18,7 +18,17 @@
 
 package com.github.jferard.odfmavenplugin;
 
+/**
+ * A utility class
+ */
 public class Util {
+    /**
+     * Add a suffix to a name. If name ends with an extensioon, insert the suffix
+     * before the extension.
+     * @param name the name
+     * @param suffix the suffix
+     * @return the name + the suffix.
+     */
     public static String insertSuffix(final String name, final String suffix) {
         int i = name.lastIndexOf('.');
         if (i == -1) {

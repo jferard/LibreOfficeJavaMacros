@@ -25,7 +25,19 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+/**
+ * A data class
+ */
 public class Data {
+    /**
+     * Create a dummy database
+     * @param documentDirectoryFile temp dir to copy csv file
+     * @param dbFile the destination file
+     * @param csvFile a csv file to copy into the base
+     * @throws SQLException
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
     public static void createBase(File documentDirectoryFile, File dbFile, File csvFile)
             throws SQLException, IOException, ClassNotFoundException {
         File tempDir = new File(documentDirectoryFile, "temp");

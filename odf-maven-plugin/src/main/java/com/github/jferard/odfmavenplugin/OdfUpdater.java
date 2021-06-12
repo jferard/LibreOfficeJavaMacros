@@ -30,12 +30,22 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
+/**
+ * A class that embeds java scripts into an odf file.
+ */
 public class OdfUpdater {
     private final String moduleName;
     private final Path sourceOdf;
     private final Path destOdf;
     private final List<RelativePath> filesToEmbed;
 
+    /**
+     *
+     * @param moduleName the name of the module (scripts will be in Scripts/java/moduleName
+     * @param sourceOdf the odf file without java scripts
+     * @param destOdf the odf file with java scripts embedded
+     * @param filesToEmbed the script files to embed
+     */
     public OdfUpdater(String moduleName, Path sourceOdf, Path destOdf, List<RelativePath> filesToEmbed) {
         this.moduleName = moduleName;
         this.sourceOdf = sourceOdf;
@@ -43,6 +53,11 @@ public class OdfUpdater {
         this.filesToEmbed = filesToEmbed;
     }
 
+    /**
+     * Update the odf/zip file.
+     * @throws IOException
+     * @throws JDOMException
+     */
     public void updateZip()
             throws IOException, JDOMException {
         ZipFile zipFile = new ZipFile(sourceOdf.toFile());

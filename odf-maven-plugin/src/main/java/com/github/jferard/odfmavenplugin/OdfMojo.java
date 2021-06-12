@@ -37,25 +37,44 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * This class represents the maven "odf" goal.
+ */
 @Mojo(name = "odf", defaultPhase = LifecyclePhase.INSTALL,
         requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
 public class OdfMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project}", required = true, readonly = true)
     MavenProject project;
 
+    /**
+     * Name of the module
+     */
     @Parameter(property = "odf.module", required = true, alias = "module")
     private String moduleName;
 
+    /**
+     * Source ODF file (without java scripts)
+     */
     @Parameter(property = "odf.src", required = true, alias = "src")
     private String sourcePathStr;
 
+    /**
+     * Destination ODF file (with java scripts)
+     */
     @Parameter(property = "odf.dest", alias = "dest")
     private String destPath;
 
+    /**
+     * Path to java scripts to embed
+     */
     @Parameter(property = "odf.embed", defaultValue = "${basedir}/src/main/resources/embed",
             alias = "embed")
     private String embedPathStr;
 
+    /**
+     * Embeds scripts into the source file to create the destination file.
+     * @throws MojoExecutionException
+     */
     public void execute() throws MojoExecutionException {
         try {
             List<RelativePath> filesToEmbed = this.getFilesToEmbed();

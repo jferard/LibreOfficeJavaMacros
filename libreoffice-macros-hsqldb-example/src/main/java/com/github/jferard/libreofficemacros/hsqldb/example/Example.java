@@ -20,7 +20,14 @@ package com.github.jferard.libreofficemacros.hsqldb.example;
 import com.github.jferard.libreofficemacrostools.Helper;
 import com.sun.star.script.provider.XScriptContext;
 
+/**
+ * the entry point for the macro (see parcel-descriptor.xml)
+ */
 public class Example {
+
+    /**
+     * the entry point for the macro (see parcel-descriptor.xml)
+     */
     public void example(XScriptContext xScriptContext) throws java.lang.Exception {
         Helper exampleHelper = Helper.create(xScriptContext);
         new GUI(xScriptContext, exampleHelper).execute();

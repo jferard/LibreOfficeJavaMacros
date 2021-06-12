@@ -23,21 +23,31 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+/**
+ * Represents a path relative to a directory.
+ */
 public class RelativePath {
     private final Path directory;
     private final Path relativePath;
 
+    /**
+     * @param directory the directory
+     * @param relativePath the path
+     */
     public RelativePath(Path directory, Path relativePath) {
         this.directory = directory;
         this.relativePath = relativePath;
     }
 
+    /**
+     * @return the absolute path
+     */
     public Path getPath() {
         return directory.resolve(relativePath);
     }
 
     /**
-     * Return the name with universal file separator
+     * @return the name with universal file separator
      */
     public String getUniversalRelativePath() {
         return StreamSupport.stream(relativePath.spliterator(), false).map(Path::toString)
@@ -52,6 +62,7 @@ public class RelativePath {
                 .collect(Collectors.toList());
     }
 
+    @Override
     public String toString() {
         return this.directory + "@" + this.relativePath;
     }
